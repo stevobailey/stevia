@@ -4,6 +4,11 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      contents: write
+      issues: write
+      pull-requests: write
     steps:
     - uses: actions/checkout@main
     - uses: chipsalliance/verible-linter-action@main
