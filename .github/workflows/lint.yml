@@ -16,6 +16,7 @@ jobs:
         paths: |
           ./rtl
         extra_args: "--check_syntax=true"
+        fail_on_error: true
         extensions: |
           .sv
           .v
