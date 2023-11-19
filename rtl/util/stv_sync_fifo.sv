@@ -1,34 +1,36 @@
 //////////////////////////////////////////////////////////////////////////////
+//
+// author: Stevo Bailey (stevo.bailey@gmail.com)
+//
 // Synchronous FIFO
 //
 // Uses ready/valid interfaces. Includes full and empty indicators, and
 // current count. The memory is not reset. The depth must be a power of 2.
 // A FLOWTHROUGH parameter allows for reading and writing on the same cycle
 // when full or empty, which can increase performance but creates
-// combinational timing paths between inputs and outputs. The data type is
-// parameterized.
+// combinational timing paths between inputs and outputs.
 //////////////////////////////////////////////////////////////////////////////
 
 module stv_sync_fifo #(
-  // data type
-  parameter  type        DTYPE       = logic[7:0],
+  // data width
+  parameter  int WIDTH       = 8,
   // depth, must be a power of 2 and > 1
-  parameter  logic[31:0] DEPTH       = 8,
+  parameter  int DEPTH       = 8,
   // allows reading and writing on the same cycle when full or empty
-  parameter  bit         FLOWTHROUGH = 0,
+  parameter  bit FLOWTHROUGH = 0,
   // pointer width
-  localparam logic[31:0] PTRWIDTH    = $clog2(DEPTH)
+  localparam int PTRWIDTH    = $clog2(DEPTH)
 ) (
   input  logic              clk,
   input  logic              arst_n,
 
   input  logic              rready,
   output logic              rvalid,
-  output DTYPE              rdata,
+  output logic [WIDTH-1:0]  rdata,
 
   input  logic              wvalid,
   output logic              wready,
-  input  DTYPE              wdata,
+  input  logic [WIDTH-1:0]  wdata,
 
   output logic              empty,
   output logic              full,
@@ -36,7 +38,7 @@ module stv_sync_fifo #(
 );
 
   // memory
-  DTYPE mem [DEPTH];
+  logic [WIDTH-1:0] mem [DEPTH];
 
   // pointers
   logic [PTRWIDTH:0] wptr, wptr_next;
