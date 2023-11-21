@@ -61,6 +61,11 @@ module stv_skid_buffer #(
       end
       default: begin
         // impossible
+        valid_out      = 0;
+        ready_out      = 0;
+        data_pipe_next = data_pipe;
+        data_skid_next = data_skid;
+        state_next     = IDLE;
       end
     endcase
   end

@@ -75,18 +75,14 @@ if __name__ == "__main__":
     test_[module name]()
 ```
 
-## Running individual tests
+## Running Tests
 
+Test files can be run directly.
 ```
-make path/to/test/directory/[module name].xml
+python path/to/test_stv_design.py
 ```
 
-You can dump a waveform by adding TRACE=yes. 
-It will put the waveform (dump.fst) in this top-level directory.
-
-```
-make path/to/test/directory/[module name].xml TRACE=yes
-```
+TODO: add trace, coverage
 
 ## Cleaning up
 
