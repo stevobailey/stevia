@@ -1,0 +1,2 @@
++parameter-type-name-style
++parameter-name-style=localparam_style:ALL_CAPS
