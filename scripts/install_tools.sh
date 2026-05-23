@@ -89,7 +89,7 @@ install_sby() {
   rm -f "${BIN_DIR}/sby"
   {
     echo "#!/usr/bin/env bash"
-    echo "exec \"${install_dir}/bin/sby\" \"\$@\""
+    echo "exec \"${ROOT_DIR}/.venv/bin/python\" \"${install_dir}/bin/sby\" \"\$@\""
   } > "${BIN_DIR}/sby"
   chmod +x "${BIN_DIR}/sby"
 }

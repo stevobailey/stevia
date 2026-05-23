@@ -1,3 +1,4 @@
 cocotb>=2,<3
+click
 pytest
 pytest-xdist
