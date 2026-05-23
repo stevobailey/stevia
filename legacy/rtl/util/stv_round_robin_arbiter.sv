@@ -35,11 +35,11 @@ module stv_round_robin_arbiter #(
 
     // If no requests above current position, look at all requests
     selected_req = no_req_above ? req : masked_req;
-    
+
     priority_mask[0] = 1'b0;
     for (int i = 1; i < INPUTS; i++)
       priority_mask[i] = priority_mask[i-1] | selected_req[i-1];
-    
+
     for (int i = 0; i < INPUTS; i++)
       gnt[i] = selected_req[i] & ~priority_mask[i];
 

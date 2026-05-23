@@ -1,0 +1,14 @@
+[options]
+mode prove
+depth 1
+
+[engines]
+smtbmc z3
+
+[script]
+read -formal -sv -DSYNTHESIS stv_lzc.sv stv_lzc_formal.sv
+prep -top stv_lzc_formal
+
+[files]
+../rtl/util/stv_lzc.sv
+stv_lzc/stv_lzc_formal.sv

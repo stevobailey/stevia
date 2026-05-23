@@ -1,10 +1,2 @@
-${STEVIA_ROOT}/rtl/util/stv_buffer.sv
-${STEVIA_ROOT}/rtl/util/stv_counter.sv
-${STEVIA_ROOT}/rtl/util/stv_gray_counter.sv
 ${STEVIA_ROOT}/rtl/util/stv_lzc.sv
-${STEVIA_ROOT}/rtl/util/stv_onehot_to_bin.sv
-${STEVIA_ROOT}/rtl/util/stv_priority_arbiter.sv
-${STEVIA_ROOT}/rtl/util/stv_round_robin_arbiter.sv
-${STEVIA_ROOT}/rtl/util/stv_step_counter.sv
 ${STEVIA_ROOT}/rtl/util/stv_sync_fifo.sv
-${STEVIA_ROOT}/rtl/util/stv_sync_fifo_outbuf.sv

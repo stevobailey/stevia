@@ -1,0 +1,68 @@
+name: RTL CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+env:
+  PYTHON_VERSION: "3.13"
+  VERIBLE_VERSION: v0.0-4053-g89d4d98a
+  SLANG_VERSION: v11.0
+  SBY_REF: f57802a16613f013e84e024df50fc3f0ea74f88b
+
+jobs:
+  check:
+    name: ${{ matrix.target }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - lint
+          - test
+          - formal
+          - synth
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install apt tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            boolector \
+            curl \
+            g++ \
+            git \
+            make \
+            tar \
+            verilator \
+            yosys \
+            z3
+
+      - name: Cache downloaded tools
+        uses: actions/cache@v4
+        with:
+          path: |
+            .tools
+            .venv
+          key: rtl-tools-${{ runner.os }}-${{ runner.arch }}-py${{ env.PYTHON_VERSION }}-${{ env.VERIBLE_VERSION }}-${{ env.SLANG_VERSION }}-${{ env.SBY_REF }}-${{ hashFiles('requirements-dev.txt') }}
+
+      - name: Install repo tools
+        run: scripts/install_tools.sh
+
+      - name: Run ${{ matrix.target }}
+        run: make ${{ matrix.target }}

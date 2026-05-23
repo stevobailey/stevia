@@ -1,0 +1,8 @@
+read_verilog -sv ../rtl/util/stv_lzc.sv
+
+hierarchy -check -auto-top
+proc
+opt
+check
+synth -run coarse
+check

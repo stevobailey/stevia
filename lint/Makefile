@@ -1,4 +1,10 @@
 
+STEVIA_ROOT ?= $(abspath ..)
+export STEVIA_ROOT
+export PATH := $(STEVIA_ROOT)/.tools/bin:$(PATH)
+SHELL := /bin/bash
+.SHELLFLAGS := -o pipefail -c
+
 all: slang.log verible.log verilator.log
 
 .PHONY: deps check-env
@@ -9,7 +15,7 @@ slang.log: deps
 	slang --lint-only -Weverything -Werror -f ${STEVIA_ROOT}/rtl/filelist.f | tee slang.log
 
 verible.log: deps
-	python ${STEVIA_ROOT}/scripts/trace_filelist.py ${STEVIA_ROOT}/rtl/filelist.f | xargs verible-verilog-lint --rules_config=${STEVIA_ROOT}/lint/stevia.rules.verible_lint | tee verible.log
+	python3 ${STEVIA_ROOT}/scripts/trace_filelist.py ${STEVIA_ROOT}/rtl/filelist.f | xargs verible-verilog-lint --rules_config=${STEVIA_ROOT}/lint/stevia.rules.verible_lint | tee verible.log
 
 verilator.log: deps
 	verilator --lint-only -Wno-MULTITOP -f ${STEVIA_ROOT}/rtl/filelist.f | tee verilator.log

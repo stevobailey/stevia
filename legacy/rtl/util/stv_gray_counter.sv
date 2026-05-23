@@ -9,8 +9,8 @@
 // register. The wrap output is high when en == 1 and the next count is 0.
 // A synchronous clear resets the counter to its initial value. A synchronous
 // load will set the counter to the din input. The down option just counts in
-// reverse, with wrap high when en == 1 and the counter is 0. Note that wrap 
-// is not affected by the INIT_VAL parameter. This counter always counts a 
+// reverse, with wrap high when en == 1 and the counter is 0. Note that wrap
+// is not affected by the INIT_VAL parameter. This counter always counts a
 // power-of-2 number of values.
 //////////////////////////////////////////////////////////////////////////////
 
@@ -33,7 +33,7 @@ module stv_gray_counter #(
   output logic             wrap
 );
 
-  logic [WIDTH-1:0] counter, counter_next; 
+  logic [WIDTH-1:0] counter, counter_next;
   logic [WIDTH-1:0] counter_bin;
   logic [WIDTH-1:0] counter_bin_p1;
   logic [WIDTH-1:0] counter_bin_m1;

@@ -1,0 +1,8 @@
+__pycache__/
+.pytest_cache/
+.venv/
+.tools/
+sim_build*/
+results*.xml
+*.log
+formal/*/*/

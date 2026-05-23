@@ -37,7 +37,7 @@ module stv_onehot_to_bin #(
   end
 
   onehot_is_onehot: assume property ($onehot0(onehot))
-    else $warning(1, "Onehot signal is not onehot!"); 
+    else $warning(1, "Onehot signal is not onehot!");
 
 `endif // ASSERT_ON
 // pragma translate_on
