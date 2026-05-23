@@ -1,6 +1,6 @@
 STEVIA_ROOT ?= $(abspath ..)
 export STEVIA_ROOT
-export PATH := $(STEVIA_ROOT)/.tools/bin:$(PATH)
+export PATH := $(STEVIA_ROOT)/.venv/bin:$(STEVIA_ROOT)/.tools/bin:$(PATH)
 
 FORMAL_TARGETS := stv_lzc
 

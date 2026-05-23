@@ -1,5 +1,5 @@
 export STEVIA_ROOT := $(CURDIR)
-export PATH := $(CURDIR)/.tools/bin:$(PATH)
+export PATH := $(CURDIR)/.venv/bin:$(CURDIR)/.tools/bin:$(PATH)
 
 .PHONY: all tools lint test formal synth clean
 

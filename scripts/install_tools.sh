@@ -108,12 +108,27 @@ install_python_deps() {
   fi
 }
 
+install_verilator_wrapper() {
+  local verilator_root
+  verilator_root="$("${ROOT_DIR}/.venv/bin/python" -c 'import pathlib, verilator; print(pathlib.Path(verilator.__file__).resolve().parent)')"
+
+  rm -f "${BIN_DIR}/verilator"
+  {
+    echo "#!/usr/bin/env bash"
+    echo "export VERILATOR_ROOT=\"${verilator_root}\""
+    echo "exec \"${verilator_root}/bin/verilator\" \"\$@\""
+  } > "${BIN_DIR}/verilator"
+  chmod +x "${BIN_DIR}/verilator"
+}
+
 install_verible
 install_slang
 install_sby
 install_python_deps
+install_verilator_wrapper
 
 echo "Installed tool wrappers:"
 "${BIN_DIR}/slang" --version
 "${BIN_DIR}/verible-verilog-lint" --version
+"${BIN_DIR}/verilator" --version
 "${BIN_DIR}/sby" --version

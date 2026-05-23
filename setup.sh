@@ -1,4 +1,4 @@
 #!/bin/bash
 
 export STEVIA_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-export PATH="${STEVIA_ROOT}/.tools/bin:${PATH}"
+export PATH="${STEVIA_ROOT}/.venv/bin:${STEVIA_ROOT}/.tools/bin:${PATH}"
