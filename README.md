@@ -217,15 +217,30 @@ make synth
 ```
 
 Synthesis smoke checks use Yosys to parse and synthesize the currently supported
-synthesizable utility modules through coarse synthesis. This is not a timing or
-area signoff flow. It is a portability check that catches unsupported syntax,
-accidental unsynthesizable constructs, missing dependencies, and basic
-elaboration issues.
+synthesizable utility modules into generic technology-independent logic. This
+is not a timing or area signoff flow. It is a portability check that catches
+unsupported syntax, accidental unsynthesizable constructs, missing dependencies,
+and basic elaboration issues.
 
-The current Yosys smoke target covers `stv_lzc`. `stv_sync_fifo` remains active
-for lint and cocotb simulation, but its `parameter type` payload configuration
-is not yet accepted by the stock Yosys SystemVerilog frontend used in this
-smoke flow.
+The current Yosys smoke target covers `stv_lzc` at `WIDTH=8`. It writes a
+generic synthesized Verilog netlist and a Yosys JSON netlist under
+`outputs/synth/`:
+
+```sh
+make synth
+less outputs/synth/yosys_smoke.log
+less outputs/synth/stv_lzc_w8.v
+less outputs/synth/stv_lzc_w8.json
+```
+
+The generic netlist uses Yosys internal cells and Boolean assignments. It is
+useful for checking that RTL can be lowered into technology-independent gates,
+but it does not report real silicon area or timing. Technology-specific area
+and timing require a Liberty file, FPGA family, or vendor flow.
+
+`stv_sync_fifo` remains active for lint and cocotb simulation, but its
+`parameter type` payload configuration is not yet accepted by the stock Yosys
+SystemVerilog frontend used in this smoke flow.
 
 ## Tool Setup
 
