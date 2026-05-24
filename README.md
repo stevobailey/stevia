@@ -46,6 +46,39 @@ by default, with one subdirectory per flow. Clean generated outputs with:
 make clean
 ```
 
+## Use Patterns
+
+The top-level targets run the same checks used by CI. They are useful when you
+want to check the active RTL surface as a whole:
+
+```sh
+make lint
+make test
+make formal
+make synth
+make all
+```
+
+Focused lint runs are available for design iteration. By default, lint uses
+`rtl/filelist.f` and writes logs under `outputs/lint/full/`. Passing `FILE` or
+`MODULE` creates a scoped filelist and writes logs under
+`outputs/lint/<scope>/`:
+
+```sh
+make lint FILE=rtl/util/stv_lzc.sv
+make lint MODULE=stv_lzc
+```
+
+Individual lint tools can also be selected:
+
+```sh
+make lint TOOL=slang
+make lint MODULE=stv_lzc TOOL=verible
+make lint FILE=rtl/util/stv_lzc.sv TOOL=verilator
+```
+
+The supported lint tools are `slang`, `verible`, and `verilator`.
+
 ## Repository Layout
 
 `rtl/` contains the synthesizable SystemVerilog source. `rtl/filelist.f` is the
