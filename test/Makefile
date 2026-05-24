@@ -1,6 +1,6 @@
 
 STEVIA_ROOT ?= $(abspath ..)
-STEVIA_OUTPUTS_DIR ?= $(STEVIA_ROOT)/outputs
+STEVIA_OUTPUTS_DIR ?= $(CURDIR)/outputs
 export STEVIA_ROOT
 export STEVIA_OUTPUTS_DIR
 export STEVIA_WAVES := $(WAVES)
@@ -13,6 +13,6 @@ all:
 	cd $(STEVIA_ROOT) && $(PYTHON) -m pytest -n auto test/smoke
 
 clean:
-	if [ -d $(STEVIA_OUTPUTS_DIR) ]; then find $(STEVIA_OUTPUTS_DIR) -mindepth 2 -maxdepth 2 -type d -name test -exec rm -rf {} +; fi
+	rm -rf $(STEVIA_OUTPUTS_DIR)
 	find $(STEVIA_ROOT) -name __pycache__ | xargs rm -rf
 	find $(STEVIA_ROOT) -name .pytest_cache | xargs rm -rf

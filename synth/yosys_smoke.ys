@@ -4,5 +4,5 @@ chparam -set WIDTH 8 stv_lzc
 synth -top stv_lzc
 check
 
-write_json ../outputs/stv_lzc/synth/stv_lzc_w8/stv_lzc_w8.json
-write_verilog -noattr ../outputs/stv_lzc/synth/stv_lzc_w8/stv_lzc_w8.v
+write_json outputs/stv_lzc/stv_lzc_w8/stv_lzc_w8.json
+write_verilog -noattr outputs/stv_lzc/stv_lzc_w8/stv_lzc_w8.v

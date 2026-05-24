@@ -1,5 +1,5 @@
 STEVIA_ROOT ?= $(abspath ..)
-STEVIA_OUTPUTS_DIR ?= $(STEVIA_ROOT)/outputs
+STEVIA_OUTPUTS_DIR ?= $(CURDIR)/outputs
 export STEVIA_ROOT
 export STEVIA_OUTPUTS_DIR
 export PATH := $(STEVIA_ROOT)/.venv/bin:$(STEVIA_ROOT)/.tools/bin:$(PATH)
@@ -11,8 +11,8 @@ FORMAL_TARGETS := stv_lzc
 all: $(FORMAL_TARGETS)
 
 $(FORMAL_TARGETS): check-env
-	mkdir -p $(STEVIA_OUTPUTS_DIR)/$@/formal
-	sby -f -d $(STEVIA_OUTPUTS_DIR)/$@/formal $@/$@.sby
+	mkdir -p $(STEVIA_OUTPUTS_DIR)
+	sby -f -d $(STEVIA_OUTPUTS_DIR)/$@ $@/$@.sby
 
 check-env:
 ifndef STEVIA_ROOT
@@ -20,4 +20,4 @@ ifndef STEVIA_ROOT
 endif
 
 clean:
-	rm -rf $(foreach target,$(FORMAL_TARGETS),$(STEVIA_OUTPUTS_DIR)/$(target)/formal)
+	rm -rf $(STEVIA_OUTPUTS_DIR)

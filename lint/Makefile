@@ -1,6 +1,6 @@
 
 STEVIA_ROOT ?= $(abspath ..)
-STEVIA_OUTPUTS_DIR ?= $(STEVIA_ROOT)/outputs
+STEVIA_OUTPUTS_DIR ?= $(CURDIR)/outputs
 export STEVIA_ROOT
 export STEVIA_OUTPUTS_DIR
 export PATH := $(STEVIA_ROOT)/.venv/bin:$(STEVIA_ROOT)/.tools/bin:$(PATH)
@@ -25,7 +25,7 @@ LINT_MODULE := $(MODULE)
 SELECTED_FILES := $(shell find $(STEVIA_ROOT)/rtl -name "$(MODULE).sv" -print)
 endif
 
-LINT_RUN_DIR := $(STEVIA_OUTPUTS_DIR)/$(LINT_MODULE)/lint
+LINT_RUN_DIR := $(STEVIA_OUTPUTS_DIR)/$(LINT_MODULE)
 LINT_FILELIST := $(STEVIA_ROOT)/rtl/filelist.f
 ifneq ($(strip $(SELECTED_FILES)),)
 LINT_FILELIST := $(LINT_RUN_DIR)/filelist.f
@@ -76,4 +76,4 @@ endif
 endif
 
 clean:
-	if [ -d $(STEVIA_OUTPUTS_DIR) ]; then find $(STEVIA_OUTPUTS_DIR) -mindepth 2 -maxdepth 2 -type d -name lint -exec rm -rf {} +; fi
+	rm -rf $(STEVIA_OUTPUTS_DIR)

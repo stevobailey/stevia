@@ -39,8 +39,9 @@ make synth
 ```
 
 Generated tool installs, virtual environments, logs, simulation builds, and
-result files are ignored by git. Check artifacts are written under `outputs/`
-by default, with one subdirectory per flow. Clean generated outputs with:
+result files are ignored by git. Check artifacts are written under each flow's
+local `outputs/` directory, such as `lint/outputs/`, `test/outputs/`,
+`formal/outputs/`, and `synth/outputs/`. Clean generated outputs with:
 
 ```sh
 make clean
@@ -60,9 +61,9 @@ make all
 ```
 
 Focused lint runs are available for design iteration. By default, lint uses
-`rtl/filelist.f` and writes logs under `outputs/_all/lint/`. Passing `FILE` or
+`rtl/filelist.f` and writes logs under `lint/outputs/_all/`. Passing `FILE` or
 `MODULE` creates a scoped filelist and writes logs under a module or file scope
-such as `outputs/stv_lzc/lint/`:
+such as `lint/outputs/stv_lzc/`:
 
 ```sh
 make lint FILE=rtl/util/stv_lzc.sv
@@ -81,11 +82,11 @@ The supported lint tools are `slang`, `verible`, and `verilator`.
 
 Simulation can optionally dump VCD waveforms. Wave-enabled runs write each
 parameterized test's results and waveform into a module/configuration directory
-under `outputs/<module>/test/`:
+under `test/outputs/<module>/`:
 
 ```sh
 make test WAVES=1
-gtkwave outputs/stv_sync_fifo/test/stv_sync_fifo_d2/stv_sync_fifo_d2.vcd
+gtkwave test/outputs/stv_sync_fifo/stv_sync_fifo_d2/stv_sync_fifo_d2.vcd
 ```
 
 ## Repository Layout
@@ -108,8 +109,9 @@ unsupported syntax, unsynthesizable constructs, and basic elaboration problems.
 
 `lint/` contains lint configuration and the lint Makefile.
 
-`outputs/` contains generated logs, simulation builds, formal work directories,
-and synthesis reports. It is ignored by git and may be deleted at any time.
+Each flow owns an ignored `outputs/` directory for generated logs, simulation
+builds, formal work directories, and synthesis reports. These directories may
+be deleted at any time.
 
 `scripts/` contains helper scripts for repeatable tool setup and filelist
 processing.
@@ -204,7 +206,7 @@ make formal
 Formal checks use SymbiYosys. The first target proves `stv_lzc` against an
 independent reference model for all input values at the configured width.
 Formal output is written under the module directory, for example
-`outputs/stv_lzc/formal/`.
+`formal/outputs/stv_lzc/`.
 
 Formal is best used where the state space and contract are crisp: encoders,
 arbiters, counters, FIFOs with bounded parameters, and ready/valid protocol
@@ -226,13 +228,13 @@ and basic elaboration issues.
 
 The current Yosys smoke target covers `stv_lzc` at `WIDTH=8`. It writes a
 generic synthesized Verilog netlist and a Yosys JSON netlist under
-`outputs/<module>/synth/<configuration>/`:
+`synth/outputs/<module>/<configuration>/`:
 
 ```sh
 make synth
-less outputs/stv_lzc/synth/stv_lzc_w8/yosys.log
-less outputs/stv_lzc/synth/stv_lzc_w8/stv_lzc_w8.v
-less outputs/stv_lzc/synth/stv_lzc_w8/stv_lzc_w8.json
+less synth/outputs/stv_lzc/stv_lzc_w8/yosys.log
+less synth/outputs/stv_lzc/stv_lzc_w8/stv_lzc_w8.v
+less synth/outputs/stv_lzc/stv_lzc_w8/stv_lzc_w8.json
 ```
 
 The generic netlist uses Yosys internal cells and Boolean assignments. It is

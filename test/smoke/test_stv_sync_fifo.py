@@ -67,8 +67,8 @@ def test_stv_sync_fifo_smoke():
     hdl_toplevel = "stv_sync_fifo"
     runner = get_runner("verilator")
     repo_root = Path(__file__).resolve().parents[2]
-    outputs_dir = Path(os.environ.get("STEVIA_OUTPUTS_DIR", repo_root / "outputs"))
-    test_outputs_dir = outputs_dir / hdl_toplevel / "test"
+    outputs_dir = Path(os.environ.get("STEVIA_OUTPUTS_DIR", repo_root / "test/outputs"))
+    test_outputs_dir = outputs_dir / hdl_toplevel
     os.environ.setdefault("STEVIA_ROOT", str(repo_root))
     os.environ["PYTHONPATH"] = (
         f"{repo_root}{os.pathsep}{os.environ.get('PYTHONPATH', '')}"

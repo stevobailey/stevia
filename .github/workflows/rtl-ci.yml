@@ -72,5 +72,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.target }}-outputs
-          path: outputs
+          path: ${{ matrix.target }}/outputs
           if-no-files-found: ignore
