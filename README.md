@@ -39,7 +39,8 @@ make synth
 ```
 
 Generated tool installs, virtual environments, logs, simulation builds, and
-result files are ignored by git. Clean generated outputs with:
+result files are ignored by git. Check artifacts are written under `outputs/`
+by default, with one subdirectory per flow. Clean generated outputs with:
 
 ```sh
 make clean
@@ -64,6 +65,9 @@ practical. Each target owns its `.sby` file and wrapper properties.
 unsupported syntax, unsynthesizable constructs, and basic elaboration problems.
 
 `lint/` contains lint configuration and the lint Makefile.
+
+`outputs/` contains generated logs, simulation builds, formal work directories,
+and synthesis reports. It is ignored by git and may be deleted at any time.
 
 `scripts/` contains helper scripts for repeatable tool setup and filelist
 processing.

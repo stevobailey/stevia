@@ -1,14 +1,20 @@
 STEVIA_ROOT ?= $(abspath ..)
+STEVIA_OUTPUTS_DIR ?= $(STEVIA_ROOT)/outputs
 export STEVIA_ROOT
+export STEVIA_OUTPUTS_DIR
 
-SYNTH_LOG := yosys_smoke.log
+SYNTH_OUTPUTS_DIR := $(STEVIA_OUTPUTS_DIR)/synth
+SYNTH_LOG := $(SYNTH_OUTPUTS_DIR)/yosys_smoke.log
 YOSYS_SCRIPT := yosys_smoke.ys
 
-.PHONY: all check-env clean
+.PHONY: all smoke check-env clean
 
-all: $(SYNTH_LOG)
+all: smoke
 
-$(SYNTH_LOG): $(YOSYS_SCRIPT) check-env
+$(SYNTH_OUTPUTS_DIR):
+	mkdir -p $@
+
+smoke: $(YOSYS_SCRIPT) check-env | $(SYNTH_OUTPUTS_DIR)
 	yosys -q -l $(SYNTH_LOG) $(YOSYS_SCRIPT)
 
 check-env:
@@ -17,4 +23,4 @@ ifndef STEVIA_ROOT
 endif
 
 clean:
-	rm -f $(SYNTH_LOG)
+	rm -rf $(SYNTH_OUTPUTS_DIR)

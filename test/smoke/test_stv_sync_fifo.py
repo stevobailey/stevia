@@ -63,13 +63,16 @@ def test_stv_sync_fifo_smoke():
     hdl_toplevel = "stv_sync_fifo"
     runner = get_runner("verilator")
     repo_root = Path(__file__).resolve().parents[2]
+    outputs_dir = Path(os.environ.get("STEVIA_OUTPUTS_DIR", repo_root / "outputs"))
+    test_outputs_dir = outputs_dir / "test"
     os.environ.setdefault("STEVIA_ROOT", str(repo_root))
     os.environ["PYTHONPATH"] = (
         f"{repo_root}{os.pathsep}{os.environ.get('PYTHONPATH', '')}"
     )
+    test_outputs_dir.mkdir(parents=True, exist_ok=True)
 
     for depth in [2, 3, 8]:
-        build_dir = repo_root / f"sim_build/{hdl_toplevel}_d{depth}"
+        build_dir = test_outputs_dir / "sim_build" / f"{hdl_toplevel}_d{depth}"
 
         runner.build(
             hdl_toplevel=hdl_toplevel,
@@ -84,5 +87,5 @@ def test_stv_sync_fifo_smoke():
             test_module="test.smoke.test_stv_sync_fifo",
             hdl_toplevel_lang="verilog",
             build_dir=build_dir,
-            results_xml=str(repo_root / f"results_stv_sync_fifo_d{depth}.xml"),
+            results_xml=str(test_outputs_dir / f"results_stv_sync_fifo_d{depth}.xml"),
         )

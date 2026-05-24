@@ -1,13 +1,17 @@
 
 STEVIA_ROOT ?= $(abspath ..)
+STEVIA_OUTPUTS_DIR ?= $(STEVIA_ROOT)/outputs
 export STEVIA_ROOT
+export STEVIA_OUTPUTS_DIR
 PYTHON ?= $(STEVIA_ROOT)/.venv/bin/python
 
+.PHONY: all clean
+
 all:
+	mkdir -p $(STEVIA_OUTPUTS_DIR)/test
 	cd $(STEVIA_ROOT) && $(PYTHON) -m pytest -n auto test/smoke
 
 clean:
-	find $(STEVIA_ROOT) -name "sim_build*" | xargs rm -rf
-	find $(STEVIA_ROOT) -name "results*.xml" | xargs rm -f
+	rm -rf $(STEVIA_OUTPUTS_DIR)/test
 	find $(STEVIA_ROOT) -name __pycache__ | xargs rm -rf
 	find $(STEVIA_ROOT) -name .pytest_cache | xargs rm -rf
