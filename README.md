@@ -189,9 +189,8 @@ make test
 
 Simulation uses cocotb 2 with Verilator. The default test suite is currently
 `test/smoke`, which is intentionally small and fast enough for every pull
-request. Smoke tests should check reset behavior, simple directed cases, random
-ready/valid traffic, and scoreboard agreement for representative parameter
-values.
+request. Current smoke tests cover `stv_lzc` across representative widths and
+`stv_sync_fifo` across representative depths.
 
 As the library grows, tests should be added near the RTL hierarchy they cover
 and promoted into the default smoke suite once they are deterministic,
