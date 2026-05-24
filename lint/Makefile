@@ -7,23 +7,25 @@ export PATH := $(STEVIA_ROOT)/.venv/bin:$(STEVIA_ROOT)/.tools/bin:$(PATH)
 SHELL := /bin/bash
 .SHELLFLAGS := -o pipefail -c
 
-LINT_OUTPUTS_DIR := $(STEVIA_OUTPUTS_DIR)/lint
 LINT_SCOPE := full
+LINT_MODULE := _all
 
 ifneq ($(strip $(FILE)),)
 ifneq ($(strip $(MODULE)),)
 $(error Set FILE or MODULE, not both)
 endif
 LINT_SCOPE := $(basename $(notdir $(FILE)))
+LINT_MODULE := $(LINT_SCOPE)
 SELECTED_FILES := $(shell if [ -f "$(FILE)" ]; then realpath "$(FILE)"; elif [ -f "$(STEVIA_ROOT)/$(FILE)" ]; then realpath "$(STEVIA_ROOT)/$(FILE)"; else printf "%s" "$(abspath $(FILE))"; fi)
 endif
 
 ifneq ($(strip $(MODULE)),)
 LINT_SCOPE := $(MODULE)
+LINT_MODULE := $(MODULE)
 SELECTED_FILES := $(shell find $(STEVIA_ROOT)/rtl -name "$(MODULE).sv" -print)
 endif
 
-LINT_RUN_DIR := $(LINT_OUTPUTS_DIR)/$(LINT_SCOPE)
+LINT_RUN_DIR := $(STEVIA_OUTPUTS_DIR)/$(LINT_MODULE)/lint
 LINT_FILELIST := $(STEVIA_ROOT)/rtl/filelist.f
 ifneq ($(strip $(SELECTED_FILES)),)
 LINT_FILELIST := $(LINT_RUN_DIR)/filelist.f
@@ -74,4 +76,4 @@ endif
 endif
 
 clean:
-	rm -rf $(LINT_OUTPUTS_DIR)
+	if [ -d $(STEVIA_OUTPUTS_DIR) ]; then find $(STEVIA_OUTPUTS_DIR) -mindepth 2 -maxdepth 2 -type d -name lint -exec rm -rf {} +; fi

@@ -68,7 +68,7 @@ def test_stv_sync_fifo_smoke():
     runner = get_runner("verilator")
     repo_root = Path(__file__).resolve().parents[2]
     outputs_dir = Path(os.environ.get("STEVIA_OUTPUTS_DIR", repo_root / "outputs"))
-    test_outputs_dir = outputs_dir / "test"
+    test_outputs_dir = outputs_dir / hdl_toplevel / "test"
     os.environ.setdefault("STEVIA_ROOT", str(repo_root))
     os.environ["PYTHONPATH"] = (
         f"{repo_root}{os.pathsep}{os.environ.get('PYTHONPATH', '')}"
@@ -77,9 +77,15 @@ def test_stv_sync_fifo_smoke():
     test_outputs_dir.mkdir(parents=True, exist_ok=True)
 
     for depth in [2, 3, 8]:
-        run_dir = test_outputs_dir / f"{hdl_toplevel}_d{depth}"
+        config_name = f"{hdl_toplevel}_d{depth}"
+        run_dir = test_outputs_dir / config_name
         build_dir = run_dir / "sim_build"
+        dump_vcd = run_dir / "dump.vcd"
+        named_vcd = run_dir / f"{config_name}.vcd"
         run_dir.mkdir(parents=True, exist_ok=True)
+        if not waves:
+            dump_vcd.unlink(missing_ok=True)
+            named_vcd.unlink(missing_ok=True)
 
         runner.build(
             hdl_toplevel=hdl_toplevel,
@@ -104,7 +110,5 @@ def test_stv_sync_fifo_smoke():
             },
         )
 
-        dump_vcd = run_dir / "dump.vcd"
-        named_vcd = run_dir / f"{hdl_toplevel}_d{depth}.vcd"
         if dump_vcd.exists():
             dump_vcd.replace(named_vcd)

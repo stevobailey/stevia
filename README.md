@@ -60,9 +60,9 @@ make all
 ```
 
 Focused lint runs are available for design iteration. By default, lint uses
-`rtl/filelist.f` and writes logs under `outputs/lint/full/`. Passing `FILE` or
-`MODULE` creates a scoped filelist and writes logs under
-`outputs/lint/<scope>/`:
+`rtl/filelist.f` and writes logs under `outputs/_all/lint/`. Passing `FILE` or
+`MODULE` creates a scoped filelist and writes logs under a module or file scope
+such as `outputs/stv_lzc/lint/`:
 
 ```sh
 make lint FILE=rtl/util/stv_lzc.sv
@@ -80,12 +80,12 @@ make lint FILE=rtl/util/stv_lzc.sv TOOL=verilator
 The supported lint tools are `slang`, `verible`, and `verilator`.
 
 Simulation can optionally dump VCD waveforms. Wave-enabled runs write each
-parameterized test's results and waveform into its own directory under
-`outputs/test/`:
+parameterized test's results and waveform into a module/configuration directory
+under `outputs/<module>/test/`:
 
 ```sh
 make test WAVES=1
-gtkwave outputs/test/stv_sync_fifo_d2/stv_sync_fifo_d2.vcd
+gtkwave outputs/stv_sync_fifo/test/stv_sync_fifo_d2/stv_sync_fifo_d2.vcd
 ```
 
 ## Repository Layout
@@ -203,6 +203,8 @@ make formal
 
 Formal checks use SymbiYosys. The first target proves `stv_lzc` against an
 independent reference model for all input values at the configured width.
+Formal output is written under the module directory, for example
+`outputs/stv_lzc/formal/`.
 
 Formal is best used where the state space and contract are crisp: encoders,
 arbiters, counters, FIFOs with bounded parameters, and ready/valid protocol
@@ -224,13 +226,13 @@ and basic elaboration issues.
 
 The current Yosys smoke target covers `stv_lzc` at `WIDTH=8`. It writes a
 generic synthesized Verilog netlist and a Yosys JSON netlist under
-`outputs/synth/`:
+`outputs/<module>/synth/<configuration>/`:
 
 ```sh
 make synth
-less outputs/synth/yosys_smoke.log
-less outputs/synth/stv_lzc_w8.v
-less outputs/synth/stv_lzc_w8.json
+less outputs/stv_lzc/synth/stv_lzc_w8/yosys.log
+less outputs/stv_lzc/synth/stv_lzc_w8/stv_lzc_w8.v
+less outputs/stv_lzc/synth/stv_lzc_w8/stv_lzc_w8.json
 ```
 
 The generic netlist uses Yosys internal cells and Boolean assignments. It is

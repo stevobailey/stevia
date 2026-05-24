@@ -26,3 +26,4 @@ clean:
 	$(MAKE) -C test clean
 	$(MAKE) -C formal clean
 	$(MAKE) -C synth clean
+	rm -rf $(STEVIA_OUTPUTS_DIR)
