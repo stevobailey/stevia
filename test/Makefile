@@ -3,6 +3,7 @@ STEVIA_ROOT ?= $(abspath ..)
 STEVIA_OUTPUTS_DIR ?= $(STEVIA_ROOT)/outputs
 export STEVIA_ROOT
 export STEVIA_OUTPUTS_DIR
+export STEVIA_WAVES := $(WAVES)
 PYTHON ?= $(STEVIA_ROOT)/.venv/bin/python
 
 .PHONY: all clean

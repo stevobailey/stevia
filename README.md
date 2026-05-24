@@ -79,6 +79,15 @@ make lint FILE=rtl/util/stv_lzc.sv TOOL=verilator
 
 The supported lint tools are `slang`, `verible`, and `verilator`.
 
+Simulation can optionally dump VCD waveforms. Wave-enabled runs write each
+parameterized test's results and waveform into its own directory under
+`outputs/test/`:
+
+```sh
+make test WAVES=1
+gtkwave outputs/test/stv_sync_fifo_d2/stv_sync_fifo_d2.vcd
+```
+
 ## Repository Layout
 
 `rtl/` contains the synthesizable SystemVerilog source. `rtl/filelist.f` is the

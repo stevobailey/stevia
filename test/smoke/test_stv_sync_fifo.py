@@ -9,6 +9,10 @@ from cocotb.triggers import RisingEdge, Timer
 from cocotb_tools.runner import get_runner
 
 
+def _env_enabled(name):
+    return os.environ.get(name, "").lower() in {"1", "true", "yes", "on"}
+
+
 @cocotb.test()
 async def random_ready_valid(dut):
     depth = int(dut.DEPTH.value)
@@ -69,10 +73,13 @@ def test_stv_sync_fifo_smoke():
     os.environ["PYTHONPATH"] = (
         f"{repo_root}{os.pathsep}{os.environ.get('PYTHONPATH', '')}"
     )
+    waves = _env_enabled("STEVIA_WAVES") or _env_enabled("WAVES")
     test_outputs_dir.mkdir(parents=True, exist_ok=True)
 
     for depth in [2, 3, 8]:
-        build_dir = test_outputs_dir / "sim_build" / f"{hdl_toplevel}_d{depth}"
+        run_dir = test_outputs_dir / f"{hdl_toplevel}_d{depth}"
+        build_dir = run_dir / "sim_build"
+        run_dir.mkdir(parents=True, exist_ok=True)
 
         runner.build(
             hdl_toplevel=hdl_toplevel,
@@ -80,6 +87,7 @@ def test_stv_sync_fifo_smoke():
             build_args=["-f", str(repo_root / "rtl/filelist.f")],
             parameters={"DEPTH": depth},
             always=True,
+            waves=waves,
         )
 
         runner.test(
@@ -87,5 +95,16 @@ def test_stv_sync_fifo_smoke():
             test_module="test.smoke.test_stv_sync_fifo",
             hdl_toplevel_lang="verilog",
             build_dir=build_dir,
-            results_xml=str(test_outputs_dir / f"results_stv_sync_fifo_d{depth}.xml"),
+            test_dir=run_dir,
+            results_xml=str(run_dir / "results.xml"),
+            waves=waves,
+            extra_env={
+                "PYTHONPATH": os.environ["PYTHONPATH"],
+                "STEVIA_ROOT": str(repo_root),
+            },
         )
+
+        dump_vcd = run_dir / "dump.vcd"
+        named_vcd = run_dir / f"{hdl_toplevel}_d{depth}.vcd"
+        if dump_vcd.exists():
+            dump_vcd.replace(named_vcd)
