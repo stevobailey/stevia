@@ -10,7 +10,7 @@ PYTHON ?= $(STEVIA_ROOT)/.venv/bin/python
 
 all:
 	mkdir -p $(STEVIA_OUTPUTS_DIR)
-	cd $(STEVIA_ROOT) && $(PYTHON) -m pytest -n auto test/smoke
+	cd $(STEVIA_ROOT) && $(PYTHON) -m pytest -n auto test
 
 clean:
 	rm -rf $(STEVIA_OUTPUTS_DIR)

@@ -34,14 +34,15 @@ endif
 SLANG_LOG := $(LINT_RUN_DIR)/slang.log
 VERIBLE_LOG := $(LINT_RUN_DIR)/verible.log
 VERILATOR_LOG := $(LINT_RUN_DIR)/verilator.log
+PORTABILITY_LOG := $(LINT_RUN_DIR)/portability.log
 
 ifneq ($(strip $(TOOL)),)
 all: $(TOOL)
 else
-all: slang verible verilator
+all: portability slang verible verilator
 endif
 
-.PHONY: all deps filelist slang verible verilator FORCE check-env clean
+.PHONY: all deps filelist portability slang verible verilator FORCE check-env clean
 
 deps: check-env $(LINT_FILELIST)
 
@@ -55,6 +56,9 @@ $(LINT_RUN_DIR)/filelist.f: FORCE | $(LINT_RUN_DIR)
 filelist: $(LINT_FILELIST)
 
 FORCE:
+
+portability: deps | $(LINT_RUN_DIR)
+	python3 ${STEVIA_ROOT}/scripts/check_rtl_portability.py $(LINT_FILELIST) | tee $(PORTABILITY_LOG)
 
 slang: deps | $(LINT_RUN_DIR)
 	slang --lint-only -Weverything -Werror -f $(LINT_FILELIST) | tee $(SLANG_LOG)

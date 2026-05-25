@@ -11,4 +11,4 @@ prep -top stv_lzc_formal
 
 [files]
 ../rtl/util/stv_lzc.sv
-stv_lzc/stv_lzc_formal.sv
+util/stv_lzc/stv_lzc_formal.sv

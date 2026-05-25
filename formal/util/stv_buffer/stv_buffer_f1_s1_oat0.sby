@@ -1,0 +1,15 @@
+[options]
+mode bmc
+depth 12
+
+[engines]
+smtbmc z3
+
+[script]
+read -formal -sv -DSYNTHESIS stv_buffer.sv stv_buffer_formal.sv
+chparam -set FLOW 1 -set SKID 1 -set OPT_AREA_TIMING 0 stv_buffer_formal
+prep -top stv_buffer_formal
+
+[files]
+../rtl/util/stv_buffer.sv
+util/stv_buffer/stv_buffer_formal.sv

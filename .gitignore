@@ -6,4 +6,4 @@ outputs/
 sim_build*/
 results*.xml
 *.log
-formal/*/*/
+formal/outputs/

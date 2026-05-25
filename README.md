@@ -10,10 +10,11 @@ verify in isolation. The main deliverable is the RTL under `rtl/`; everything
 else in this repository exists to check that RTL before pull requests are merged
 or releases are cut.
 
-Stevia is early in its modernization. The current active RTL surface is small:
-`stv_lzc` and `stv_sync_fifo` are kept under `rtl/util` and checked by the
-default flow. Earlier exploratory RTL and tests live under `legacy/` so they can
-be recovered or rewritten without being treated as release-quality blocks.
+Stevia is early in its modernization. The current active RTL surface is focused
+on utility blocks under `rtl/util`, including counters, arbiters, buffering,
+FIFO, one-hot conversion, and leading-zero count blocks. Earlier exploratory
+RTL and tests live under `legacy/` so they can be recovered or rewritten without
+being treated as release-quality blocks.
 
 ## Quick Start
 
@@ -98,8 +99,8 @@ are part of the active library surface.
 `legacy/` contains pre-modernization RTL and tests that are intentionally
 excluded from the default checks.
 
-`test/smoke/` contains the default cocotb smoke tests. These are intended to be
-fast PR checks, not exhaustive verification.
+`test/` contains cocotb tests arranged to mirror the active RTL hierarchy. For
+example, utility RTL under `rtl/util/` is tested under `test/util/`.
 
 `formal/` contains SymbiYosys harnesses for modules where formal checks are
 practical. Each target owns its `.sby` file and wrapper properties.
@@ -128,13 +129,50 @@ All RTL should follow these project rules:
 5. Prefer simple ready/valid ports for streaming data.
 6. Avoid tool-specific RTL unless it is isolated, documented, and covered by
    the lint/synthesis flow.
+7. Use plain packed data ports with width parameters in reusable primitives;
+   keep parameterized payload types in wrappers or integration code.
 
 ## Recommended RTL Practices
 
 Write modules as reusable library components, not as one-off subsystem glue.
 Interfaces should be explicit ports, with stable naming and parameterization.
-Prefer `parameter type` for payload types where tool support allows it, and
-plain width parameters where that improves synthesis/formal compatibility.
+For portable library primitives, prefer `WIDTH` parameters and packed
+`logic [WIDTH-1:0]` data ports over `parameter type` payloads. Packed structs
+can still connect directly to these vector ports from wrapper or integration
+code:
+
+```systemverilog
+typedef struct packed {
+  logic [7:0] len;
+  logic [2:0] size;
+} axi_len_size_t;
+
+axi_len_size_t fifo_din;
+axi_len_size_t fifo_dout;
+
+stv_sync_fifo #(
+  .WIDTH($bits(axi_len_size_t)),
+  .DEPTH(8)
+) u_fifo (
+  .clk,
+  .arst_n,
+  .clear,
+  .din_valid,
+  .din_ready,
+  .din(fifo_din),
+  .dout_valid,
+  .dout_ready,
+  .dout(fifo_dout),
+  .empty,
+  .full,
+  .count
+);
+```
+
+This keeps core blocks friendly to Verilator, Yosys, formal tools, and older
+flows while preserving typed readability at the edges. Avoid passing large
+monolithic structs through a primitive when the block only needs a few fields;
+prefer a narrow packed payload type near the use site.
 
 Keep reset behavior deliberate. Control/state registers should reset through
 `arst_n`. Datapath storage that does not need a reset, such as FIFO memories or
@@ -169,6 +207,10 @@ make lint
 
 Lint runs three complementary tools:
 
+`scripts/check_rtl_portability.py` checks project portability rules that are
+important for the active RTL surface, including the ban on SystemVerilog
+interfaces and `parameter type` payloads in reusable primitives.
+
 `slang --lint-only -Weverything -Werror` checks SystemVerilog parsing,
 elaboration, type correctness, constant evaluation, and a broad set of semantic
 warnings.
@@ -188,13 +230,13 @@ make test
 ```
 
 Simulation uses cocotb 2 with Verilator. The default test suite is currently
-`test/smoke`, which is intentionally small and fast enough for every pull
-request. Current smoke tests cover `stv_lzc` across representative widths and
-`stv_sync_fifo` across representative depths.
+the tests under `test/`, which are intentionally small and fast enough for
+every pull request. Current tests cover the active utility blocks across a small
+set of representative widths, depths, modes, and directed/random transactions.
 
-As the library grows, tests should be added near the RTL hierarchy they cover
-and promoted into the default smoke suite once they are deterministic,
-maintained, and fast.
+As the library grows, tests should be added near the RTL hierarchy they cover.
+Generated simulation artifacts stay under `test/outputs/<module>/<config>/`,
+so source-like test organization and run-output cleanup remain separate.
 
 ### Formal
 
@@ -202,10 +244,16 @@ maintained, and fast.
 make formal
 ```
 
-Formal checks use SymbiYosys. The first target proves `stv_lzc` against an
+Formal checks use SymbiYosys. `stv_lzc` is proved by induction against an
 independent reference model for all input values at the configured width.
-Formal output is written under the module directory, for example
-`formal/outputs/stv_lzc/`.
+`stv_buffer` is checked across the supported `FLOW`, `SKID`, and
+`OPT_AREA_TIMING` combinations with bounded ready/valid properties, including
+ordering, capacity, fall-through behavior, and skid-buffer ready behavior.
+`stv_sync_fifo` uses a similar bounded model for representative `FLOW` and
+`SKID` modes, checking ordering, count/empty/full metadata, full behavior,
+fall-through, and skid-ready behavior.
+Formal output is written under the target directory, for example
+`formal/outputs/stv_lzc/` or `formal/outputs/stv_buffer_f1_s1_oat0/`.
 
 Formal is best used where the state space and contract are crisp: encoders,
 arbiters, counters, FIFOs with bounded parameters, and ready/valid protocol
@@ -225,12 +273,15 @@ is not a timing or area signoff flow. It is a portability check that catches
 unsupported syntax, accidental unsynthesizable constructs, missing dependencies,
 and basic elaboration issues.
 
-The current Yosys smoke target covers `stv_lzc` at `WIDTH=8`. It writes a
-generic synthesized Verilog netlist and a Yosys JSON netlist under
+The current Yosys smoke flow covers one representative configuration for each
+active utility module. It writes the generated Yosys script, log, generic
+synthesized Verilog netlist, and Yosys JSON netlist under
 `synth/outputs/<module>/<configuration>/`:
 
 ```sh
 make synth
+make synth MODULE=stv_sync_fifo
+make synth CONFIG=stv_lzc_w8
 less synth/outputs/stv_lzc/stv_lzc_w8/yosys.log
 less synth/outputs/stv_lzc/stv_lzc_w8/stv_lzc_w8.v
 less synth/outputs/stv_lzc/stv_lzc_w8/stv_lzc_w8.json
@@ -240,10 +291,6 @@ The generic netlist uses Yosys internal cells and Boolean assignments. It is
 useful for checking that RTL can be lowered into technology-independent gates,
 but it does not report real silicon area or timing. Technology-specific area
 and timing require a Liberty file, FPGA family, or vendor flow.
-
-`stv_sync_fifo` remains active for lint and cocotb simulation, but its
-`parameter type` payload configuration is not yet accepted by the stock Yosys
-SystemVerilog frontend used in this smoke flow.
 
 ## Tool Setup
 

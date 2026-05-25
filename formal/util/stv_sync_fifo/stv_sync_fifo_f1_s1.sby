@@ -1,0 +1,15 @@
+[options]
+mode bmc
+depth 10
+
+[engines]
+smtbmc z3
+
+[script]
+read -formal -sv -DSYNTHESIS stv_sync_fifo.sv stv_sync_fifo_formal.sv
+chparam -set FLOW 1 -set SKID 1 stv_sync_fifo_formal
+prep -top stv_sync_fifo_formal
+
+[files]
+../rtl/util/stv_sync_fifo.sv
+util/stv_sync_fifo/stv_sync_fifo_formal.sv

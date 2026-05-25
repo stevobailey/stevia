@@ -79,7 +79,7 @@ def test_stv_lzc_smoke():
 
         runner.test(
             hdl_toplevel=hdl_toplevel,
-            test_module="test.smoke.test_stv_lzc",
+            test_module="test.util.test_stv_lzc",
             hdl_toplevel_lang="verilog",
             build_dir=build_dir,
             test_dir=run_dir,
