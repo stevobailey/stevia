@@ -14,15 +14,11 @@ module stv_onehot_to_bin #(
   output logic [BIN_WIDTH-1:0]    bin
 );
 
-  logic [BIN_WIDTH-1:0][ONEHOT_WIDTH-1:0] mask;
-
   always_comb begin
-    for (int i = 0; i < BIN_WIDTH; i++) begin
-      for (int j = 0; j < ONEHOT_WIDTH; j++) begin
-        mask[i][j] = j[i];
-      end
-      bin[i] = |(mask[i] & onehot);
-    end
+    bin = '0;
+    for (int i = 0; i < ONEHOT_WIDTH; i++)
+      if (onehot[i])
+        bin |= BIN_WIDTH'(i);
   end
 
 //////////////////////////////////////////////////////////////////////////////
